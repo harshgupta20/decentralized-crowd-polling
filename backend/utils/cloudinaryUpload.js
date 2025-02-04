@@ -1,8 +1,11 @@
 const { v2: cloudinary } = require('cloudinary');
 require('dotenv').config();
 
-async function cloudinaryUpload(ImageInBase64) {
+async function cloudinaryUpload(ImageInBase64, public_id, imageFormat = 'png') {
     try {
+        if (!ImageInBase64 || !imageFormat || !public_id) {
+            throw new Error("Image/Image-Format/Image-ID could not be detected.");
+        }
 
         // Configuration
         cloudinary.config({
@@ -11,47 +14,42 @@ async function cloudinaryUpload(ImageInBase64) {
             api_secret: process.env.CLOUDINARY_API_SECRET
         });
 
-        // Upload an image
-        const uploadResult = await cloudinary.uploader
-            .upload(
-                'https://placehold.co/600x400.jpg', {
-                public_id: 'shoes',
-            }
-            )
-            .catch((error) => {
-                console.log(error);
-            });
+        // Remove spaces and newlines from Base64 string
+        ImageInBase64 = ImageInBase64.replace(/\s/g, '');
 
-        console.log(uploadResult);
+        // Ensure Base64 has the required format prefix
+        const base64Image = ImageInBase64.startsWith('data:image')
+            ? ImageInBase64
+            : `data:image/${imageFormat};base64,${ImageInBase64}`;
+
+        console.log("Uploading to Cloudinary...");
+
+        // Upload the image
+        const uploadResult = await cloudinary.uploader.upload(base64Image, {
+            public_id: public_id,
+            resource_type: 'image'
+        });
+
+        console.log("Upload successful:", uploadResult);
 
         // Optimize delivery by resizing and applying auto-format and auto-quality
-        const optimizeUrl = cloudinary.url('shoes', {
+        const optimizeUrl = cloudinary.url(uploadResult.public_id, {
             fetch_format: 'auto',
             quality: 'auto'
         });
 
-        console.log(optimizeUrl);
-
-        // Transform the image: auto-crop to square aspect_ratio
-        // const autoCropUrl = cloudinary.url('shoes', {
-        //     crop: 'auto',
-        //     gravity: 'auto',
-        //     width: 500,
-        //     height: 500,
-        // });
-
-        // console.log(autoCropUrl);    
+        console.log("Optimized URL:", optimizeUrl);
 
         return {
             success: true,
             data: uploadResult
-        }
-    }
-    catch (error) {
+        };
+    } catch (error) {
+        console.error("Cloudinary upload error:", error);
         return {
             success: false,
-            data: error.message || "Something went wrong with image upload."
-        }
+            message: error.message || "Something went wrong with image upload."
+        };
     }
 };
 
