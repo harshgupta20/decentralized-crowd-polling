@@ -2,11 +2,18 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
+// ROUTERS
+const UserRouter = require("./routers/UserRouter");
+const WorkerRouter = require("./routers/WorkerRouter");
+
 const cloudinaryUpload = require("./utils/cloudinaryUpload");
 
 app.use(cors());
 app.use(express.json({ limit: "50mb" })); // Increase limit to 50MB
 app.use(express.urlencoded({ extended: true, limit: "50mb" })); // Increase limit for form data
+
+app.use("/v1/user", UserRouter);
+app.use("/v1/worker", WorkerRouter);
 
 app.post("/test", async (req, res) => {
     try {
