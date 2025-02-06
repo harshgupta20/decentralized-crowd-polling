@@ -1,8 +1,9 @@
 const {Router} = require('express');
 const Worker = require('../controllers/Worker/Index');
+const authMiddleware = require('../middleware/authMiddleware');
 const router = Router();
 
-router.get('/', new Worker().GetWorkers);
+router.get('/', authMiddleware,  new Worker().GetWorkers);
 
 
 
