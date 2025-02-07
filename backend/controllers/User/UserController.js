@@ -35,10 +35,54 @@ module.exports = class UserController {
                 });
 
 
-                return {task, optionTableResponse};
+                return { task, optionTableResponse };
             });
 
             return addTaskQueryResponse;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getTask(queryBody, userId) {
+        try {
+            const { taskId } = queryBody;
+            const task = await prismaClient.task.findMany({
+                where: {
+                    id: taskId && Number(taskId),
+                    user_id: userId
+                },
+                include: {
+                    options: true
+                }
+            });
+
+            const optionTableResponse = await prismaClient.submission.findMany({
+                where: {
+                    task_id: taskId && Number(taskId)
+                },
+                include: {
+                    option: true
+                }
+            });
+
+            task.map((item) => {
+                item.optionWithMaxCount = {};
+                item.options.map((option) => {
+                    let count = 0;
+                    optionTableResponse.forEach((submission) => {
+                        if (submission.option_id === option.id) {
+                            count++;
+                        }
+                    })
+                    option.count = count;
+                    if ((item.optionWithMaxCount?.count ?? 0) < count) {
+                        item.optionWithMaxCount = { id: option.id, imageUrl: option.image_url, count };
+                    }
+                })
+            });
+
+            return task;
         } catch (error) {
             throw error;
         }
@@ -54,7 +98,7 @@ module.exports = class UserController {
                 }
             });
 
-            if(!userData){
+            if (!userData) {
                 userData = await prismaClient.user.create({
                     data: {
                         address: solanaAddress
