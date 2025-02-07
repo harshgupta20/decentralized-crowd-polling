@@ -39,4 +39,28 @@ module.exports = class WorkerController {
             throw error;
         }
     }
+
+    async nextTask(queryData, userId) {
+        try {
+            const response = prismaClient.task.findFirst({
+                where: {
+                    done: false,
+                    submissions: {
+                        none: {
+                            worker_id: userId
+                        }
+                    }
+                },
+                select: {
+                    id: true,
+                    title: true,
+                    options: true
+                }
+            });
+
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
 }

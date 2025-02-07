@@ -4,6 +4,7 @@ const auth = require('../middleware/authMiddleware');
 const router = Router();
 
 router.get('/', auth.workerAuthMiddleware,  new Worker().GetWorkers);
+router.get('/nextTask', auth.workerAuthMiddleware,  new Worker().nextTask);
 router.post('/signin', new Worker().signin);
 
 

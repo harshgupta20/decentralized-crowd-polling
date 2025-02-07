@@ -24,6 +24,19 @@ module.exports = class Worker {
         }
     }
 
+    async nextTask(req, res) {
+        try {
+            const result = await new WorkerController().nextTask(req.query, req.userId);
+            res.status(200).send({
+                success: true,
+                token: result
+            });
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ success: false, error: error.message || "Something went wrong!" });
+        }
+    }
+
     async editWorker(req, res) {
         try {
             res.status(500).send('GetWorkers');
