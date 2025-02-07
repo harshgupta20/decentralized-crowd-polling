@@ -1,8 +1,10 @@
 const { PrismaClient } = require("@prisma/client");
 const { signJwt } = require("../../utils/jwt");
+require('dotenv').config();
 
 
 const prismaClient = new PrismaClient();
+const USER_JWT_SECRET = process.env.JWT_SECRET;
 
 module.exports = class UserController {
     async getUsers(requestBody) {
@@ -105,7 +107,9 @@ module.exports = class UserController {
                     }
                 });
             }
-            const token = signJwt({ id: userData.id });
+
+            const token = signJwt({ id: userData.id, role: "user" }, USER_JWT_SECRET);
+
             return token;
         } catch (error) {
             throw error;

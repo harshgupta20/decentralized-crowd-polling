@@ -1,18 +1,17 @@
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
 
-const signJwt = (data) => {
+const signJwt = (data, jwt_secret) => {
     try {
-        return jwt.sign(data, process.env.JWT_SECRET);
+        return jwt.sign(data, jwt_secret, { expiresIn: '1d' });
     }
     catch (error) {
         throw error;
     }
 }
 
-const verifyJwt = (token) => {
+const verifyJwt = (token, jwt_secret) => {
     try {
-        return jwt.verify(token, process.env.JWT_SECRET);
+        return jwt.verify(token, jwt_secret);
     }
     catch (error) {
         throw error;
