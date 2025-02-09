@@ -105,6 +105,23 @@ module.exports = class WorkerController {
             throw error;
         }
     }
+
+    async getBalance(queryData, userId) {
+        try {
+            const response = await prismaClient.worker.findFirst({
+                where: {
+                    id: userId
+                },
+                select: {
+                    pending_amount: true,
+                    locked_amount: true
+                }
+            });
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 const nextTaskByUserId = async (userId) => {
