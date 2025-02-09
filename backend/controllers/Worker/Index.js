@@ -29,7 +29,20 @@ module.exports = class Worker {
             const result = await new WorkerController().nextTask(req.query, req.userId);
             res.status(200).send({
                 success: true,
-                token: result
+                data: result
+            });
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ success: false, error: error.message || "Something went wrong!" });
+        }
+    }
+
+    async submission(req, res) {
+        try {
+            const result = await new WorkerController().submission(req.body, req.userId);
+            res.status(200).send({
+                success: true,
+                data: result
             });
         } catch (error) {
             console.log(error);

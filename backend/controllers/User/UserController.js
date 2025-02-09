@@ -23,7 +23,7 @@ module.exports = class UserController {
                 const task = await prisma.task.create({
                     data: {
                         title,
-                        amount: "100",
+                        amount: 100,
                         signature,
                         user_id: userId,
                     }
