@@ -122,6 +122,53 @@ module.exports = class WorkerController {
             throw error;
         }
     }
+    async payout(queryData, userId) {
+        try {
+
+            const worker = await prismaClient.worker.findFirst({
+                where: {
+                    id: userId
+                }
+            });
+
+            if(!worker){
+                throw "Worker not found";
+            }
+
+            const address = worker?.address;
+
+            const response = await prismaClient.$transaction(async (prisma) => {
+                const workerResponse = await prisma.worker.update({
+                    where: {
+                        id: userId
+                    },
+                    data: {
+                        pending_amount: {
+                            decrement: worker.pending_amount
+                        },
+                        locked_amount: {
+                            increment: worker.pending_amount
+                        }
+                    }
+                });
+
+                const payout = await prisma.payouts.create({
+                    data: {
+                        worker_id: userId,
+                        amount: worker.pending_amount,
+                        signature: address,
+                        status: "Processing"
+                    }
+                });
+                
+                return { workerResponse, payout };
+            })
+
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 const nextTaskByUserId = async (userId) => {

@@ -25,6 +25,7 @@ model Worker {
   pending_amount Int
   locked_amount  Int
   submissions    Submission[]
+  Payouts        Payouts[]
 }
 
 model Task {
@@ -34,7 +35,7 @@ model Task {
   user_id     Int
   signature   String
   amount      Int
-  done        Boolean?      @default(false)
+  done        Boolean?     @default(false)
   user        User         @relation(fields: [user_id], references: [id])
   submissions Submission[]
 }
@@ -56,5 +57,21 @@ model Submission {
   task_id   Int
   task      Task   @relation(fields: [task_id], references: [id])
   amount    String
+
   @@unique([worker_id, task_id])
+}
+
+model Payouts {
+  id        Int       @id @default(autoincrement())
+  worker_id Int
+  worker    Worker    @relation(fields: [worker_id], references: [id])
+  amount    Int
+  signature String
+  status    TxnStatus
+}
+
+enum TxnStatus {
+  Processing
+  Success
+  Failure
 }

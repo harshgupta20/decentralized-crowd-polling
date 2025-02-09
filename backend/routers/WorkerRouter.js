@@ -7,6 +7,7 @@ router.get('/', auth.workerAuthMiddleware,  new Worker().GetWorkers);
 router.get('/nextTask', auth.workerAuthMiddleware,  new Worker().nextTask);
 router.post('/submission', auth.workerAuthMiddleware,  new Worker().submission);
 router.get('/balance', auth.workerAuthMiddleware,  new Worker().getBalance);
+router.post('/payout', auth.workerAuthMiddleware,  new Worker().payout);
 router.post('/signin', new Worker().signin);
 
 
