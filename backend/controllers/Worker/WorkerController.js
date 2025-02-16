@@ -34,8 +34,8 @@ module.exports = class WorkerController {
                     }
                 });
             }
-            const token = signJwt({ id: userData.id, role: "worker" }, WORKER_JWT_SECRET);
-            return token;
+            const token = signJwt({ id: userData.id, role: "worker", address: solanaAddress }, WORKER_JWT_SECRET);
+            return {address: solanaAddress ,token};
         } catch (error) {
             throw error;
         }

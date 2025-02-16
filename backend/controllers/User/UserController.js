@@ -117,7 +117,7 @@ module.exports = class UserController {
                 });
             }
 
-            const token = signJwt({ id: userData.id, role: "user" }, USER_JWT_SECRET);
+            const token = signJwt({ id: userData.id, role: "user", address: solanaAddress }, USER_JWT_SECRET);
 
             return {address: solanaAddress, token};
         } catch (error) {
