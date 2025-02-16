@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import axiosInstance from '../../utils/axios';
+import toastAlert from '../../utils/alert';
 
 const AddTask = () => {
     // Initialize state with an array of 2 empty image objects
@@ -31,18 +33,31 @@ const AddTask = () => {
     };
 
     // Handle form submission
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const handleSubmit = async (e) => {
+        try{
 
-        // Prepare the data to send to the API
-        const data = {
-            title: e.target.title.value,
-            images: imageInputs.filter(image => image !== null)  // Only include non-null base64 images
-        };
+            e.preventDefault();
+            
+            // Prepare the data to send to the API
+            const data = {
+                title: e.target.title.value,
+                options: imageInputs.filter(image => image !== null),  // Only include non-null base64 images,
+                signature: "Sample signature"
+            };
+            
+            const response = await axiosInstance.post("/v1/user/task", {
+                ...data
+            });
+            console.log("response ===>", response);
+            console.log('Sending data to API:', data);
 
-        console.log('Sending data to API:', data);
-
-        // Here you would send `data` to your API (using fetch or axios)
+            toastAlert("success", "Task Added Successfully.");
+            
+            // Here you would send `data` to your API (using fetch or axios)
+        }
+        catch(error){
+            toastAlert("error", error?.message || "Something Went Wrong.");
+        }
     };
 
     console.log("imageInputs", imageInputs)

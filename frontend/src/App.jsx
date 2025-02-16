@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import { AuthContext } from './context/AuthContext';
 
 import { ToastContainer } from 'react-toastify';
+import FormComponent from './pages/Form';
 
 const App = () => {
 
@@ -33,6 +34,7 @@ const App = () => {
 
           <ToastContainer />
         </AuthContext.Provider>
+        <FormComponent/>
       </Router>
       {/* <Form /> */}
     </>

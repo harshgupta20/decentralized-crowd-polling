@@ -5,10 +5,8 @@ module.exports = {
     taskInput: (req, res, next) => {
         try {
             const schema = zod.object({
-                options: zod.array(zod.object({
-                    imageUrl: zod.string(),
-                })),
-                title: zod.string().min(3).max(50),
+                options: zod.array(zod.string()),
+                title: zod.string().min(3).max(100),
                 signature: zod.string().min(3).max(100),
             });
 

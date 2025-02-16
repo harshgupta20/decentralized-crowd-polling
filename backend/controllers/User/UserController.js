@@ -1,5 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const { signJwt } = require("../../utils/jwt");
+const { getRandomSixDigitNumber } = require("../../utils/helperFunction");
+const cloudinaryUpload = require("../../utils/cloudinaryUpload");
 require('dotenv').config();
 
 
@@ -19,6 +21,24 @@ module.exports = class UserController {
         try {
             const { options, title, signature } = requestBody;
 
+            if(options.length==0 || !options || options?.length > 5){
+                throw "Task options are invalid."
+            }
+            
+            let optionsImageSuccess = [];
+            let optionImageFailBase64 = [];
+            
+            options.forEach(async (imageBase64, key) => {
+                const uploadResult = await cloudinaryUpload(imageBase64, `${userId}-${key}-${getRandomSixDigitNumber()}`);
+                
+                if(uploadResult.success){
+                    optionsImageSuccess.push(uploadResult?.data?.url);
+                }
+                else{
+                    optionImageFailBase64.push(imageBase64);
+                }
+            })
+
             const addTaskQueryResponse = await prismaClient.$transaction(async (prisma) => {
                 const task = await prisma.task.create({
                     data: {
@@ -30,8 +50,8 @@ module.exports = class UserController {
                 });
 
                 const optionTableResponse = await prisma.option.createMany({
-                    data: options.map((item) => ({
-                        image_url: item.imageUrl,
+                    data: optionsImageSuccess.map((imageUrl) => ({
+                        image_url: imageUrl,
                         task_id: task.id,
                     }))
                 });
@@ -40,7 +60,7 @@ module.exports = class UserController {
                 return { task, optionTableResponse };
             });
 
-            return addTaskQueryResponse;
+            return {addTaskQueryResponse, optionImageFailBase64};
         } catch (error) {
             throw error;
         }

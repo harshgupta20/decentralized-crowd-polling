@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import { Link } from 'react-router-dom';
 import axiosInstance from '../utils/axios';
-import toastify from "../utils/alert";
+import toastAlert from "../utils/alert";
 import { AuthContext } from '../context/AuthContext';
 
 const Navbar = () => {
@@ -31,14 +31,14 @@ const Navbar = () => {
                 localStorage.setItem("token", response?.data?.data?.token);
                 localStorage.setItem("address", response?.data?.data?.address);
                 setIsUserAuthenticated(response?.data?.data);
-                toastify("success", "Signin Success.");
+                toastAlert("success", "Signin Success.");
             }
             else {
                 throw "Can't signin."
             }
         }
         catch (error) {
-            toastify("error", error.message || "Something went wrong.")
+            toastAlert("error", error.message || "Something went wrong.")
             console.log(error.message);
         }
         finally {
@@ -52,9 +52,10 @@ const Navbar = () => {
             setIsUserAuthenticated({});
             localStorage.removeItem("token");
             localStorage.removeItem("address");
+            toastAlert("success", "Signout Success.")
         }
         catch(error){
-            toastify("error", error.message || "Error in signing out.")
+            toastAlert("error", error.message || "Error in signing out.")
         }
         finally{
             setSigninLoader(false);

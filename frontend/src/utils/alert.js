@@ -1,6 +1,6 @@
 import { Bounce, toast } from "react-toastify";
 
-export default (type, message) => {
+const toastAlert = (type, message) => {
     if (type === "success") {
         return toast.success(message, {
             position: "top-right",
@@ -40,4 +40,7 @@ export default (type, message) => {
             transition: Bounce,
         });
     }
-}
+};
+
+
+export default toastAlert;
