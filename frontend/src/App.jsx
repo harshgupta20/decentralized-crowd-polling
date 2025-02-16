@@ -34,8 +34,6 @@ const App = () => {
 
 
             <Route element={<ProtectedRoute element={<VoteTask />} />} path="/worker/vote" />
-
-            
             <Route element={<NotFound />} path="*" />
           </Routes>
 
