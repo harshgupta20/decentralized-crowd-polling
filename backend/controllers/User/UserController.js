@@ -110,7 +110,7 @@ module.exports = class UserController {
 
             const token = signJwt({ id: userData.id, role: "user" }, USER_JWT_SECRET);
 
-            return token;
+            return {address: solanaAddress, token};
         } catch (error) {
             throw error;
         }

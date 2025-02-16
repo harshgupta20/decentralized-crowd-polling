@@ -36,7 +36,7 @@ module.exports = class User {
             const result = await new UserController().signin(req.body);
             res.status(200).send({
                 success: true,
-                token: result
+                data: result
             });
         } catch (error) {
             console.log(error);

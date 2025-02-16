@@ -52,7 +52,7 @@ const AddTask = () => {
             <h1 className='text-3xl mb-3 font-bold'>Add Task</h1>
             <form onSubmit={handleSubmit} className='flex flex-col gap-3'>
                 <input name='title' className='w-ful`l p-2 border-2 border-indigo-400 rounded-md outline-none' type="text" placeholder='Title of the thumbnail.' />
-                <fieldset className='border-2 border-indigo-500 p-3'>
+                <fieldset className='border-2 border-indigo-500 p-3 rounded-md'>
                     <legend className='m-3'>
                         <div className='flex gap-3'>
                             <button disabled={imageInputs?.length >= 5 ? true : false} className='px-2 py-1 bg-indigo-400 text-white rounded-md' type="button" onClick={addImageInput}>Add Image</button>

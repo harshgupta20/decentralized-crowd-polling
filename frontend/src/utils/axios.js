@@ -1,21 +1,41 @@
-import axios from "axios";
+// src/axiosInstance.js
+import axios from 'axios';
 
-// Add a request interceptor
-axios.interceptors.request.use(function (config) {
-    // Do something before request is sent
+const axiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_BACKEND_URL,  // Replace with your API base URL
+});
+
+// Request interceptor
+axiosInstance.interceptors.request.use(
+  (config) => {
+    // You can add authorization tokens or modify headers here
+    const token = localStorage.getItem('token'); // Example of getting a token from localStorage
+    if (token) {
+      config.headers['authorization'] = `${token}`;
+    }
     return config;
-}, function (error) {
-    // Do something with request error
-    return Promise.reject(error);
-});
+  },
+  (error) => {
+    return Promise.reject(error); // Handle request errors
+  }
+);
 
-// Add a response interceptor
-axios.interceptors.response.use(function (response) {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
+// Response interceptor
+axiosInstance.interceptors.response.use(
+  (response) => {
+    // You can handle successful responses here (e.g., logging)
     return response;
-}, function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
+  },
+  (error) => {
+    // Handle response errors here (e.g., logging out on 401)
+    if (error.response && error.response.status === 401) {
+      console.log('Unauthorized, logging out...');
+      // Perform any logic such as redirecting to login page
+      // or clearing out local storage/session storage.
+      localStorage.removeItem('token');
+    }
     return Promise.reject(error);
-});
+  }
+);
+
+export default axiosInstance;
