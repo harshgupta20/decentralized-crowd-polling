@@ -20,6 +20,12 @@ const Navbar = () => {
             route: "/user/view-tasks",
             callBackFunction: () => { console.log("Callback function called."); },
             protectedRoute: true
+        },
+        {
+            name: "Vote Task",
+            route: "/worker/vote",
+            callBackFunction: () => { console.log("Callback function called."); },
+            protectedRoute: true
         }
     ];
 

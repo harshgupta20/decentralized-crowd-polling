@@ -8,6 +8,7 @@ import { AuthContext } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute'; // Import ProtectedRoute
 import { ToastContainer } from 'react-toastify';
 import NotFound from './pages/NotFound';
+import VoteTask from './pages/worker/VoteTask';
 
 const App = () => {
   const [isUserAuthenticated, setIsUserAuthenticated] = useState({});
@@ -30,6 +31,9 @@ const App = () => {
             {/* Protected routes */}
             <Route element={<ProtectedRoute element={<AddTask />} />} path="/user/add-task" />
             <Route element={<ProtectedRoute element={<ViewTasks />} />} path="/user/view-tasks" />
+
+
+            <Route element={<ProtectedRoute element={<VoteTask />} />} path="/worker/vote" />
 
             
             <Route element={<NotFound />} path="*" />
