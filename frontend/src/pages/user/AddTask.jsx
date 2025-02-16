@@ -5,6 +5,7 @@ import toastAlert from '../../utils/alert';
 const AddTask = () => {
     // Initialize state with an array of 2 empty image objects
     const [imageInputs, setImageInputs] = useState([null, null]);
+    const [isTaskSubmitting, setIsTaskSubmitting] = useState(false);
 
     // Function to handle adding a new image input
     const addImageInput = () => {
@@ -35,10 +36,9 @@ const AddTask = () => {
     // Handle form submission
     const handleSubmit = async (e) => {
         try{
-
+            setIsTaskSubmitting(true);
             e.preventDefault();
             
-            // Prepare the data to send to the API
             const data = {
                 title: e.target.title.value,
                 options: imageInputs.filter(image => image !== null),  // Only include non-null base64 images,
@@ -48,19 +48,16 @@ const AddTask = () => {
             const response = await axiosInstance.post("/v1/user/task", {
                 ...data
             });
-            console.log("response ===>", response);
-            console.log('Sending data to API:', data);
 
             toastAlert("success", "Task Added Successfully.");
-            
-            // Here you would send `data` to your API (using fetch or axios)
         }
         catch(error){
             toastAlert("error", error?.message || "Something Went Wrong.");
         }
+        finally{
+            setIsTaskSubmitting(false);
+        }
     };
-
-    console.log("imageInputs", imageInputs)
 
     return (
         <div className='p-6'>
@@ -102,7 +99,7 @@ const AddTask = () => {
 
                 </fieldset>
 
-                <button className='py-2 px-4 bg-indigo-400 text-white rounded-md' type="submit">Submit</button>
+                <button disabled={isTaskSubmitting} className='py-2 px-4 bg-indigo-400 text-white rounded-md' type="submit">{isTaskSubmitting ? "Submitting...": "Submit"}</button>
             </form>
         </div>
     );
