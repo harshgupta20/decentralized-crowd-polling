@@ -3,10 +3,13 @@ import { Link } from 'react-router-dom';
 import axiosInstance from '../utils/axios';
 import toastAlert from "../utils/alert";
 import { AuthContext } from '../context/AuthContext';
+import SigninOptionModal from './SignInOptionModal';
 
 const Navbar = () => {
     const [signinLoader, setSigninLoader] = useState(false);
     const { isUserAuthenticated, setIsUserAuthenticated } = useContext(AuthContext);
+
+    const [showAuthOptionModal, setShowAuthOptionModal] = useState(false);
 
     const MENU_OPTION = [
         {
@@ -31,16 +34,17 @@ const Navbar = () => {
 
     const signinHandler = async () => {
         try {
-            setSigninLoader(true);
-            const response = await axiosInstance.post("/v1/user/signin");
-            if (response?.status === 200) {
-                localStorage.setItem("token", response?.data?.data?.token);
-                localStorage.setItem("address", response?.data?.data?.address);
-                setIsUserAuthenticated(response?.data?.data);
-                toastAlert("success", "Signin Success.");
-            } else {
-                throw "Can't signin.";
-            }
+            setShowAuthOptionModal(true);
+            // setSigninLoader(true);
+            // const response = await axiosInstance.post("/v1/user/signin");
+            // if (response?.status === 200) {
+            //     localStorage.setItem("token", response?.data?.data?.token);
+            //     localStorage.setItem("address", response?.data?.data?.address);
+            //     setIsUserAuthenticated(response?.data?.data);
+            //     toastAlert("success", "Signin Success.");
+            // } else {
+            //     throw "Can't signin.";
+            // }
         } catch (error) {
             toastAlert("error", error.message || "Something went wrong.");
             console.log(error.message);
@@ -127,6 +131,8 @@ const Navbar = () => {
                     </li>
                 )}
             </ul>
+
+            <SigninOptionModal open={showAuthOptionModal} setOpen={setShowAuthOptionModal}/>
         </nav>
     );
 };

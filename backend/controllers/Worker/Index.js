@@ -16,7 +16,7 @@ module.exports = class Worker {
             const result = await new WorkerController().signin(req.body);
             res.status(200).send({
                 success: true,
-                token: result
+                data: result
             });
         } catch (error) {
             console.log(error);
