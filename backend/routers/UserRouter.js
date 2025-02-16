@@ -6,7 +6,7 @@ const router = Router();
 
 router.post('/signin', new User().signin);
 router.post("/task", auth.userAuthMiddleware, validation.taskInput, new User().addTask);
-router.get("/task", auth.userAuthMiddleware, validation.taskInput, new User().getTask);
+router.get("/task", auth.userAuthMiddleware, new User().getTask);
 router.get('/', auth.userAuthMiddleware, new User().GetUsers);
 
 

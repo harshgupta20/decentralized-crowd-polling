@@ -13,7 +13,6 @@ module.exports = class User {
 
     async addTask(req, res) {
         try {
-            console.log("------------------")
             const result = await new UserController().addTask(req.body, req.userId);
             res.status(200).send({ success: true, data: result });
         } catch (error) {

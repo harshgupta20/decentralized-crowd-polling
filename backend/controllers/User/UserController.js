@@ -25,19 +25,8 @@ module.exports = class UserController {
                 throw "Task options are invalid."
             }
             
-            let optionsImageSuccess = [];
-            let optionImageFailBase64 = [];
-            
-            options.forEach(async (imageBase64, key) => {
-                const uploadResult = await cloudinaryUpload(imageBase64, `${userId}-${key}-${getRandomSixDigitNumber()}`);
-                
-                if(uploadResult.success){
-                    optionsImageSuccess.push(uploadResult?.data?.url);
-                }
-                else{
-                    optionImageFailBase64.push(imageBase64);
-                }
-            })
+            const {optionsImageSuccess, optionImageFailBase64} = await uploadAndCollectCloudinaryUrl(options, userId);
+
 
             const addTaskQueryResponse = await prismaClient.$transaction(async (prisma) => {
                 const task = await prisma.task.create({
@@ -134,5 +123,29 @@ module.exports = class UserController {
         } catch (error) {
             throw error;
         }
+    }
+}
+
+
+const uploadAndCollectCloudinaryUrl = async (options, userId) => {
+    try{
+        let optionsImageSuccess = [];
+        let optionImageFailBase64 = [];
+        
+        for(let i=0; i<=options.length; i++){
+            const uploadResult = await cloudinaryUpload(options[i], `${userId}-${i}-${getRandomSixDigitNumber()}`);
+            
+            if(uploadResult.success){
+                optionsImageSuccess.push(uploadResult?.data?.url);
+            }
+            else{
+                optionImageFailBase64.push(options[i]);
+            }
+        }
+
+        return {optionsImageSuccess, optionImageFailBase64}
+    }
+    catch(error){
+        throw error;
     }
 }

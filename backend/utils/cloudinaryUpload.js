@@ -22,7 +22,7 @@ async function cloudinaryUpload(ImageInBase64, public_id, imageFormat = 'png') {
             ? ImageInBase64
             : `data:image/${imageFormat};base64,${ImageInBase64}`;
 
-        console.log("Uploading to Cloudinary...");
+        // console.log("Uploading to Cloudinary...");
 
         // Upload the image
         const uploadResult = await cloudinary.uploader.upload(base64Image, {
@@ -30,7 +30,7 @@ async function cloudinaryUpload(ImageInBase64, public_id, imageFormat = 'png') {
             resource_type: 'image'
         });
 
-        console.log("Upload successful:", uploadResult);
+        // console.log("Upload successful:", uploadResult);
 
         // Optimize delivery by resizing and applying auto-format and auto-quality
         const optimizeUrl = cloudinary.url(uploadResult.public_id, {
@@ -38,14 +38,14 @@ async function cloudinaryUpload(ImageInBase64, public_id, imageFormat = 'png') {
             quality: 'auto'
         });
 
-        console.log("Optimized URL:", optimizeUrl);
+        // console.log("Optimized URL:", optimizeUrl);
 
         return {
             success: true,
             data: uploadResult
         };
     } catch (error) {
-        console.error("Cloudinary upload error:", error);
+        // console.error("Cloudinary upload error:", error);
         return {
             success: false,
             message: error.message || "Something went wrong with image upload."
