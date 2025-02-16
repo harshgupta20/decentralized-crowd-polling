@@ -35,35 +35,38 @@ const AddTask = () => {
 
     // Handle form submission
     const handleSubmit = async (e) => {
-        try{
+        try {
             setIsTaskSubmitting(true);
             e.preventDefault();
-            
+    
             const data = {
                 title: e.target.title.value,
                 options: imageInputs.filter(image => image !== null),  // Only include non-null base64 images,
                 signature: "Sample signature"
             };
-            
+    
             const response = await axiosInstance.post("/v1/user/task", {
                 ...data
             });
-
+    
             toastAlert("success", "Task Added Successfully.");
-        }
-        catch(error){
+    
+            // Reset the form after successful submission
+            e.target.reset();
+            setImageInputs([null, null]); // Reset the image inputs to the initial state
+        } catch (error) {
             toastAlert("error", error?.message || "Something Went Wrong.");
-        }
-        finally{
+        } finally {
             setIsTaskSubmitting(false);
         }
     };
+    
 
     return (
         <div className='p-6'>
             <h1 className='text-3xl mb-3 font-bold'>Add Task</h1>
             <form onSubmit={handleSubmit} className='flex flex-col gap-3'>
-                <input name='title' className='w-ful`l p-2 border-2 border-indigo-400 rounded-md outline-none' type="text" placeholder='Title of the thumbnail.' />
+                <input name='title' required className='w-ful`l p-2 border-2 border-indigo-400 rounded-md outline-none' type="text" placeholder='Title of the thumbnail.' />
                 <fieldset className='border-2 border-indigo-500 p-3 rounded-md'>
                     <legend className='m-3'>
                         <div className='flex gap-3'>
@@ -81,6 +84,7 @@ const AddTask = () => {
                                     name={`image-${index}`}
                                     accept="image/*"
                                     onChange={(e) => handleImageChange(e, index)}
+                                    required
                                 />
 
                                 {/* Show image preview if the image is loaded */}
