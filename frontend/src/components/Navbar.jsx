@@ -1,13 +1,17 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axiosInstance from '../utils/axios';
 import toastAlert from "../utils/alert";
 import { AuthContext } from '../context/AuthContext';
 import SigninOptionModal from './SignInOptionModal';
+import { WalletDisconnectButton, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 const Navbar = () => {
     const [signinLoader, setSigninLoader] = useState(false);
     const { isUserAuthenticated, setIsUserAuthenticated } = useContext(AuthContext);
+
+    const { publicKey, signMessage } = useWallet();
 
     const [showAuthOptionModal, setShowAuthOptionModal] = useState(false);
 
@@ -67,6 +71,26 @@ const Navbar = () => {
         }
     };
 
+    const signMesageWithWallet = async () => {
+        try {
+            const message = new TextEncoder().encode("Sign in with Decentralized Crowd Polling.");
+            const signature = await signMessage(message);
+            console.log("Signature ===>", signature)
+
+            const response = await axiosInstance.post("/v1/user/signin", {
+                publicKey, signature
+            });
+
+            localStorage.setItem("token", response?.data?.data?.token);
+            localStorage.setItem("address", response?.data?.data?.address);
+            setIsUserAuthenticated(response?.data?.data);
+            toastAlert("success", "Signin Success.");
+        }
+        catch (error) {
+            console.log("Error -->", error?.message || "Something went wrong.")
+        }
+    }
+
     return (
         <nav className="bg-indigo-500 text-white py-4 px-6 shadow-md flex justify-between items-center">
             <Link to="/">
@@ -107,7 +131,7 @@ const Navbar = () => {
                     // );
                 })}
 
-                {isUserAuthenticated?.address ? (
+                {/* {isUserAuthenticated?.address ? (
                     <li
                         onClick={signoutHandler}
                         className="flex items-center px-4 py-2 bg-white text-indigo-500 border-2 border-white cursor-pointer rounded-lg transition-all duration-300 hover:bg-indigo-400 hover:text-white"
@@ -129,10 +153,23 @@ const Navbar = () => {
                             <span>Connect Wallet</span>
                         )}
                     </li>
-                )}
+                )} */}
+
+                {
+                    publicKey ?
+                        <WalletDisconnectButton />
+                        :
+                        <WalletMultiButton />
+                }
+                {
+                    (publicKey && !isUserAuthenticated?.address) && <button onClick={signMesageWithWallet}>Authenticate Account</button>
+                }
+                {
+                    isUserAuthenticated?.address && <button disabled>Authenticated 👌</button>
+                }
             </ul>
 
-            <SigninOptionModal open={showAuthOptionModal} setOpen={setShowAuthOptionModal}/>
+            <SigninOptionModal open={showAuthOptionModal} setOpen={setShowAuthOptionModal} />
         </nav>
     );
 };
