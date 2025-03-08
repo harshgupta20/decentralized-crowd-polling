@@ -33,6 +33,7 @@ axiosInstance.interceptors.response.use(
       // Perform any logic such as redirecting to login page
       // or clearing out local storage/session storage.
       localStorage.removeItem('token');
+      window.location.href="/"
     }
     return Promise.reject(error);
   }
